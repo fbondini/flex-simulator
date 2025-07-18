@@ -1,0 +1,85 @@
+[lint]
+select = [
+    "I",
+    "N",
+    "D",
+    "E",
+    "F",
+    "W",
+    "B",
+    "A",
+    "ANN",
+    "S",
+    "BLE",
+    "FBT",
+    "COM",
+    "EM",
+    "FA",
+    "ISC",
+    "ICN",
+    "PIE",
+    "PYI",
+    "PT",
+    "Q",
+    "RET",
+    "SLF",
+    "SIM",
+    "TID",
+    "TCH",
+    "PTH",
+    "FIX",
+    "PD",
+    "NPY",
+    "PERF",
+    "FURB",
+    "RUF",
+    "TD004",
+    "TD005",
+    "TD006",
+    "TD007",
+    "PL",
+    "FLY",
+    "DOC",
+]
+ignore = [
+    "ANN101",
+    "ANN102",
+    "PLR0911",
+    "PLR0913",
+    "PLR0914",
+    "PLR0915",
+    "PLR0917",
+    "PLR1702",
+    "PLR1711",
+    "PLR1716",
+    "PLR2004",
+    "PLR2044",
+    "PLR6104",
+    "PLR6201",
+    "PLW1641",
+    "PLW1514",
+    "S311",
+]
+preview = true
+
+
+[lint.flake8-annotations]
+mypy-init-return = true
+
+[lint.pydocstyle]
+convention = "numpy"
+
+[lint.extend-per-file-ignores]
+"test*/**/*.py" = [
+    # at least these three should be fine in tests:
+    "S101", # asserts allowed in tests...
+    "ARG",  # Unused function args -> fixtures nevertheless are functionally relevant...
+    "FBT",  # Don't care about booleans as positional arguments in tests, e.g. via @pytest.mark.parametrize()
+    "D1",   # I am incredibly lazy and many unit tests still have to be written,
+    # no mandatory docstrings in tests (they will still have to follow style guides if present)
+    "PLR6301", # Grouping things by class in pytest made slightly easier.
+    "PERF203", # Try except in loops in testing is very valid imo.
+]
+
+[format]
+preview = true

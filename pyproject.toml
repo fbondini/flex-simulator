@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "flex"
+version = "0.1.0"
+description = "FLEX Rocket Simulator to simulate rocket trajectories with different engineering models"
+authors = ["Francesco Bondini <bondini.francesco.vr@gmail.com>"]
+readme = "README.md"
+packages = [{ include = "flex" }]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+numpy = "^2.2.5"
+scipy = "^1.15.2"
+matplotlib = "^3.10.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.5"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
