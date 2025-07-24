@@ -133,7 +133,7 @@ class CartesianDynamicSimulator(DynamicsSimulator):
         current_state = State(t, current_pos, current_vel, current_mass)
         acc = acceleration_settings.acceleration(current_state)
         vel = x[3:6]
-        
+
         # Checks if there's a thrust acceleration in the acceleration list
         # If there is, it saves the current thrust vector, to calculate the mass rate
         acceleration_list = acceleration_settings.accelerations

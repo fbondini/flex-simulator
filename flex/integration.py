@@ -4,9 +4,8 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Callable, List, Optional, Tuple
 
-from scipy.integrate import odeint, solve_ivp
-
 import numpy as np
+from scipy.integrate import odeint, solve_ivp
 
 PRECISION = 8  # precision digits in time steps indices
 
@@ -97,18 +96,18 @@ class ScipyOdeint(IntegratorSettings):
 class ScipySolveIVP(IntegratorSettings):
     """Defines the class for solve_ivp settings and sets the ODE solver."""
 
-    def __init__(self, 
-                 t_vec: List[float] | np.ndarray,
-                 event_settings: Optional[List["EventSetting"]] = None,
-                 method: str = 'RK45',
-                 rtol: float = 1e-10,
-                 atol: float = 1e-12,
-                 max_step: float = np.inf,
-                 first_step: Optional[float] = None,
-                 dense_output: bool = False,
-                 vectorized: bool = False,
-                 **options
-                 ) -> None:
+    def __init__(self,
+            t_vec: List[float] | np.ndarray,
+            event_settings: Optional[List["EventSetting"]] = None,
+            method: str = "RK45",
+            rtol: float = 1e-10,
+            atol: float = 1e-12,
+            max_step: float = np.inf,
+            first_step: Optional[float] = None,
+            dense_output: bool = False,  # noqa: FBT001, FBT002
+            vectorized: bool = False,  # noqa: FBT001, FBT002
+            **options,  # noqa: ANN003
+            ) -> None:
         """Initialise the integrator.
 
         Parameters
@@ -118,7 +117,7 @@ class ScipySolveIVP(IntegratorSettings):
         event_settings: List | None
             List of event setting objects
         method: str
-            Integration method. One of 'RK45' (default), 'RK23', 'DOP853', 
+            Integration method. One of 'RK45' (default), 'RK23', 'DOP853',
             'Radau', 'BDF', 'LSODA'.
         rtol: float
             Relative tolerance parameter. Default 1e-10 for orbital mechanics.
@@ -167,9 +166,9 @@ class ScipySolveIVP(IntegratorSettings):
             sol: full solve_ivp output
         """
         sol = solve_ivp(
-            fun, 
-            self.t_span, 
-            x0, 
+            fun,
+            self.t_span,
+            x0,
             method=self.method,
             t_eval=self.t_vec,
             dense_output=self.dense_output,
@@ -180,14 +179,13 @@ class ScipySolveIVP(IntegratorSettings):
             atol=self.atol,
             max_step=self.max_step,
             first_step=self.first_step,
-            **self.options
+            **self.options,
         )
 
         state_history = dict()
         for i, t in enumerate(sol.t):
             state_history[round(float(t), PRECISION)] = sol.y[:, i]
         return state_history, sol
-
 
 
 class EventSetting(ABC):

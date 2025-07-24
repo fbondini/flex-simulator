@@ -9,7 +9,7 @@ from flex.environment import Rocket, State
 from flex.integration import ScipySolveIVP
 
 sat_initial_state = State(
-    t0=0, 
+    t0=0,
     pos0=np.array([7178000, 0, 0]),
     vel0=np.array([0, 0, np.sqrt(3.986004e14 / 7178000)]),
     mass0=100,
