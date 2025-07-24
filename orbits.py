@@ -31,7 +31,7 @@ acceleration_settings = accelerations.AccelerationSettings(
     rocket=satellite,
 )
 
-integration_settings = ScipySolveIVP(t_vec=np.arange(0, 10000, 1))
+integration_settings = ScipySolveIVP(t_vec=np.arange(0, 10000, .01))
 
 # Create the dynamic simulator
 dynamic_simulator = CartesianDynamicSimulator(
@@ -62,7 +62,7 @@ plt.plot(state[:, 0], state[:, 2])
 plt.xlabel("X position (m)")
 plt.ylabel("Z position (m)")
 plt.grid()
-plt.legend()
+# plt.legend()
 plt.axis("equal")
 
 plt.show()

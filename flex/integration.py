@@ -2,12 +2,11 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Callable, List, Optional, Tuple
+from typing import Callable, List, Optional, Tuple
 
 from scipy.integrate import odeint, solve_ivp
 
-if TYPE_CHECKING:
-    import numpy as np
+import numpy as np
 
 PRECISION = 8  # precision digits in time steps indices
 
@@ -98,9 +97,18 @@ class ScipyOdeint(IntegratorSettings):
 class ScipySolveIVP(IntegratorSettings):
     """Defines the class for solve_ivp settings and sets the ODE solver."""
 
-    def __init__(self, t_vec: List[float] | np.ndarray,
-                    event_settings: Optional[List["EventSetting"]] = None,
-                    ) -> None:
+    def __init__(self, 
+                 t_vec: List[float] | np.ndarray,
+                 event_settings: Optional[List["EventSetting"]] = None,
+                 method: str = 'RK45',
+                 rtol: float = 1e-10,
+                 atol: float = 1e-12,
+                 max_step: float = np.inf,
+                 first_step: Optional[float] = None,
+                 dense_output: bool = False,
+                 vectorized: bool = False,
+                 **options
+                 ) -> None:
         """Initialise the integrator.
 
         Parameters
@@ -109,10 +117,35 @@ class ScipySolveIVP(IntegratorSettings):
             Times at which to evaluate the solution.
         event_settings: List | None
             List of event setting objects
+        method: str
+            Integration method. One of 'RK45' (default), 'RK23', 'DOP853', 
+            'Radau', 'BDF', 'LSODA'.
+        rtol: float
+            Relative tolerance parameter. Default 1e-10 for orbital mechanics.
+        atol: float
+            Absolute tolerance parameter. Default 1e-12 for orbital mechanics.
+        max_step: float
+            Maximum allowed step size.
+        first_step: float | None
+            Initial step size. If None, the algorithm will choose.
+        dense_output: bool
+            Whether to compute a continuous solution.
+        vectorized: bool
+            Whether the function is implemented in a vectorized fashion.
+        **options
+            Additional options passed to the integration method.
         """
         self.t_span = [t_vec[0], t_vec[-1]]
         self.t_vec = t_vec
         self.event_settings = event_settings
+        self.method = method
+        self.rtol = rtol
+        self.atol = atol
+        self.max_step = max_step
+        self.first_step = first_step
+        self.dense_output = dense_output
+        self.vectorized = vectorized
+        self.options = options
 
     def integrate(self, fun: Callable, x0: np.ndarray, args: Tuple) -> Tuple:
         """Run the integration.
@@ -133,13 +166,28 @@ class ScipySolveIVP(IntegratorSettings):
             the state at that time for every entry.
             sol: full solve_ivp output
         """
-        sol = solve_ivp(fun, self.t_span, x0, args=args,
-                            events=self.event_settings, t_eval=self.t_vec)
+        sol = solve_ivp(
+            fun, 
+            self.t_span, 
+            x0, 
+            method=self.method,
+            t_eval=self.t_vec,
+            dense_output=self.dense_output,
+            events=self.event_settings,
+            vectorized=self.vectorized,
+            args=args,
+            rtol=self.rtol,
+            atol=self.atol,
+            max_step=self.max_step,
+            first_step=self.first_step,
+            **self.options
+        )
 
         state_history = dict()
         for i, t in enumerate(sol.t):
             state_history[round(float(t), PRECISION)] = sol.y[:, i]
         return state_history, sol
+
 
 
 class EventSetting(ABC):
